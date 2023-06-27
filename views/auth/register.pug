@@ -1,0 +1,33 @@
+extends ../layouts/index
+
+block content
+        h1.text-4xl.my-10.font-bold.text-center Real 
+            span.font-normal State
+        h2.text-2xl.text-center.font-bold= title
+
+        form(method="POST" action="/auth/register" noValidate).bg-white.px-4.py-6.shadow.max-w-md.mt-4.mx-auto.space-y-4
+            div
+                label.block.text-sm.uppercase.text-gray-600.font-bold(for="name") Name
+                input#name.w-full.px-3.py-1.border.border-gray-300.rounded(placeholder="Your name" type="text" name="name" value= user ? user.name : '')
+                if errors
+                    p.text-sm.text-red-500= errors.name
+            div
+                label.block.text-sm.uppercase.text-gray-600.font-bold(for="email") Email
+                input#email.w-full.px-3.py-1.border.border-gray-300.rounded(placeholder="Your email" type="email" name="email" value= user ? user.email : '')
+                if errors
+                    p.text-sm.text-red-500= errors.email
+            div
+                label.block.text-sm.uppercase.text-gray-600.font-bold(for="password") Password
+                input#password.w-full.px-3.py-1.border.border-gray-300.rounded(placeholder="Write your password" type="password" name="password")
+                if errors
+                    p.text-sm.text-red-500= errors.password
+            div
+                label.block.text-sm.uppercase.text-gray-600.font-bold(for="password2") Confirm password
+                input#password2.w-full.px-3.py-1.border.border-gray-300.rounded(placeholder="Confirm your password" type="password" name="password2")
+                if errors
+                    p.text-sm.text-red-500= errors.password2
+
+            .flex.items-center.justify-between
+                a(href="/auth/login").text-gray-500.text-sm.font-semibold.cursor-pointer Already have an account?
+                
+            input(class="py-2 px-4 bg-sky-300 rounded text-white font-semibold cursor-pointer hover:bg-sky-400 w-full" type="submit" value="Create account")
