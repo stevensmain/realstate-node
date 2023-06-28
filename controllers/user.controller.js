@@ -1,5 +1,7 @@
 import { check, validationResult } from 'express-validator'
 import User from '../models/User.js'
+import { generateId } from '../helpers/tokens.js'
+import { registerEmail } from '../helpers/emails.js'
 
 const formLogin = (req, res) => {
   res.render('auth/login', {
@@ -13,6 +15,9 @@ const formRegister = (req, res) => {
 }
 
 const register = async (req, res) => {
+  const { body } = req
+  const { email, password, name } = body
+
   // Validate
   await check('name').notEmpty().withMessage('Name is required').run(req)
   await check('email').isEmail().withMessage('Email is invalid').run(req)
@@ -21,7 +26,7 @@ const register = async (req, res) => {
     .withMessage('Password must be at least 6 characters')
     .run(req)
   await check('password2')
-    .equals('password')
+    .equals(password)
     .withMessage('Passwords must be equals')
     .run(req)
 
@@ -38,14 +43,44 @@ const register = async (req, res) => {
       title: 'Create a new account',
       errors: errorMessages,
       user: {
-        name: req.body.name,
-        email: req.body.email
+        name,
+        email
       }
     })
   }
 
-  const user = await User.create(req.body)
-  res.json(user)
+  const userExists = await User.findOne({ where: { email: req.body.email } })
+
+  if (userExists) {
+    return res.render('auth/register', {
+      title: 'Create a new account',
+      errors: { auth: 'Usuario ya registrado' },
+      user: {
+        name,
+        email
+      }
+    })
+  }
+
+  // Create new user
+  const user = await User.create({
+    name,
+    password,
+    email,
+    token: generateId()
+  })
+
+  // Send verification email
+  await registerEmail({
+    name: user.name,
+    email: user.email,
+    token: user.token
+  })
+
+  return res.render('templates/message', {
+    title: 'Successful register',
+    msg: 'We have send you an mail to your email address, please click on the link'
+  })
 }
 
 const formForgotPassword = (req, res) => {

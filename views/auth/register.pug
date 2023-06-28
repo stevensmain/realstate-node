@@ -5,6 +5,10 @@ block content
             span.font-normal State
         h2.text-2xl.text-center.font-bold= title
 
+        if errors && errors.auth
+            .bg-red-500.p-2.max-w-md.mx-auto.mt-4.rounded
+                p.text-white.text-sm.font-bold= errors.auth
+
         form(method="POST" action="/auth/register" noValidate).bg-white.px-4.py-6.shadow.max-w-md.mt-4.mx-auto.space-y-4
             div
                 label.block.text-sm.uppercase.text-gray-600.font-bold(for="name") Name
