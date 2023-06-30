@@ -20,7 +20,9 @@ const registerEmail = async ({ email, name, token }) => {
 
         <p>
             Please confirm your account by clicking on the following link
-            <a href="">Confirm your account</a>
+            <a href="${process.env.APP_URL}:${
+      process.env.PORT ?? 3000
+    }/auth/confirm/${token}">Confirm your account</a>
         </p>
 
         <p>If you did not create this account, ignore this email</p>
