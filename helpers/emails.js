@@ -30,4 +30,34 @@ const registerEmail = async ({ email, name, token }) => {
   })
 }
 
-export { registerEmail }
+const resetPasswordEmail = async ({ email, name, token }) => {
+  const transport = nodemailer.createTransport({
+    host: process.env.EMAIL_HOST,
+    port: process.env.PORT,
+    auth: {
+      user: process.env.EMAIL_USER,
+      pass: process.env.EMAIL_PASSWORD
+    }
+  })
+
+  await transport.sendMail({
+    from: 'RealState.com',
+    to: email,
+    subject: 'RealState - Reset password',
+    text: 'Reset password in RealState.com',
+    html: `
+        <p>Hello ${name}, you have requested to change your password.</p>
+
+        <p>
+            Please click the following link to change your password
+            <a href="${process.env.APP_URL}:${
+      process.env.PORT ?? 3000
+    }/auth/confirm/${token}">Reset password</a>
+        </p>
+
+        <p>If you did not request change your password, ignore this email</p>
+    `
+  })
+}
+
+export { registerEmail, resetPasswordEmail }
